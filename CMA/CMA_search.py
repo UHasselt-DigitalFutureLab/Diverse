@@ -49,10 +49,8 @@ class CMASearch:
         self.todo_file_path = Path(f"todo/{self.experiment_name}.json")
         os.makedirs(self.todo_file_path.parent, exist_ok=True)
         self.z_file_path = Path("z_seeds")
-        #self.sigma_values = [0.1, 0.2, 0.3, 0.4, 0.5]
-        self.sigma_values = [0.1]
-        #self.z_dims = [2, 4, 8, 16, 32, 64]
-        self.z_dims = [2]
+        self.sigma_values = [0.1, 0.2, 0.3, 0.4, 0.5]
+        self.z_dims = [2, 4, 8, 16, 32, 64]
         self._todo = None
 
 
