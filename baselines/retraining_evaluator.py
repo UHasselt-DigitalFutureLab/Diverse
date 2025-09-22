@@ -138,7 +138,7 @@ def handle_cli_args():
     parser = argparse.ArgumentParser(description="Train models with different seeds.")
     parser.add_argument("--model", type=str, choices=["resnet", "vgg", "mnist"], required=True,
                         help="Type of model to train: 'resnet', 'vgg', or 'mnist'.")
-    parser.add_argument("--max_models", type=int, choices=[167, 320, 640, 1284, 2562, 5120], required=True,
+    parser.add_argument("--search_budget", type=int, choices=[167, 320, 640, 1284, 2562, 5120], required=True,
                         help="Maximum number of models to evaluate.")
     args = parser.parse_args()
     return args
@@ -157,6 +157,6 @@ if __name__ == "__main__":
         raise ValueError(f"Unknown model type: {model_type}")
     for epsilon in [0.01, 0.02, 0.03, 0.04, 0.05]:
         print(f"Processing epsilon: {epsilon}")
-        for models in [50]:
+        for models in [args.search_budget]:
             npz_folder = f"baseline_evaluations/retraining/retraining_{model_type}"
             get_data_from_chunk(npz_folder, epsilon, models, ref_val_loss, ref_test_loss, y_true, ref_preds)

@@ -447,7 +447,7 @@ def handle_cli_args():
                         help="Type of model to train: 'resnet', 'vgg', or 'mnist'.")
     parser.add_argument("--start_seed", type=int, choices=[42, 45], required=True,
                         help="Starting seed value (inclusive).")
-    parser.add_argument("--amount_to_train", type=int, choices=[167, 320, 640, 1284, 2562, 5120], required=True,
+    parser.add_argument("--search_budget", type=int, choices=[167, 320, 640, 1284, 2562, 5120], required=True,
                         help="Number of models to train.")
     args = parser.parse_args()
     return args
@@ -455,7 +455,7 @@ def handle_cli_args():
 if __name__ == "__main__":
     args = handle_cli_args()
     start_seed = args.start_seed  # inclusive
-    amount_to_train = args.amount_to_train
+    amount_to_train = args.search_budget
     end_seed = start_seed + amount_to_train  # exclusive
 
     if args.model == "resnet":

@@ -55,3 +55,70 @@ This will:
 1. Train the reference (pretrained) models for each dataset.
 2. Generate initial latent vectors (**Z seeds**) used for CMA-ES exploration.
 
+
+## 🏁 Running Baselines
+Before running any baselines, ensure the conda environment is activated:
+```bash
+conda activate diverse
+```
+### Dropout (Hsu et al., 2024)
+We provide an implementation of the dropout-based Rashomon exploration method described in [Hsu et al. (ICLR 2024).](https://proceedings.iclr.cc/paper_files/paper/2024/file/8cd1ce03ea58b3d7dfd809e4d42f08ea-Paper-Conference.pdf)
+
+
+For MNIST:
+```bash
+python -m baselines.dropout --method=gaussian --model=mnist --epsilon=0.05 --search_budget=167
+```
+
+For ResNet50:
+```bash
+python -m baselines.dropout --method=gaussian --model=resnet --epsilon=0.05 --search_budget=167
+```
+
+For VGG16:
+```bash
+python -m baselines.dropout --method=gaussian --model=vgg --epsilon=0.05 --search_budget=167
+```
+
+
+### Retraining
+**Warning:** Retraining is computationally expensive and may require significant time and GPU resources.You can adjust the number of models to train and evaluate via the ```--search_budget``` flags.
+Supported values: **167, 320, 640, 1284, 2562, 5120**.
+#### Training
+For MNIST:
+```bash
+python -m baselines.retraining --model=mnist --start_seed=42 --search_budget=5120
+```
+
+For ResNet50:
+```bash
+python -m baselines.retraining --model=resnet --start_seed=42 --search_budget=640
+```
+
+For VGG16:
+```bash
+python -m baselines.retraining --model=vgg --start_seed=45 --search_budget=640
+```
+
+#### Evaluation
+After training, results can be evaluated on the test set.
+Outputs will be stored in 5 folders (```epsilon_0.01```, ```epsilon_0.02```, ```epsilon_0.03```, ```epsilon_0.04```, ```epsilon_0.05```) in the following path:
+```
+baseline_evaluations/retraining/retraining_<model>/epsilon_<epsilon_value>/
+```
+
+For MNIST:
+```bash
+python -m baselines.retraining_evaluator --model=mnist --search_budget=5120
+```
+
+For ResNet50:
+```bash
+python -m baselines.retraining_evaluator --model=resnet --search_budget=640
+```
+
+For VGG16:
+```bash
+python -m baselines.retraining_evaluator --model=vgg --search_budget=640
+```
+
