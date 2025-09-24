@@ -191,6 +191,5 @@ def handle_cli_args():
 if __name__ == "__main__": 
     # Handle CLI arguments
     args = handle_cli_args()
-    model_name = args.model_type.split("_")[0]  # "mnist", "resnet50" or "vgg16"
-    cma = CMAEvaluator(seed=42, epsilon=args.epsilon, model_type=args.model_type, z_dim=args.z_dim, experiment_folder=f"cma_experiments/{args.model_type}/cma_{model_name}_epsilon_{args.epsilon}/z_{args.z_dim}")
+    cma = CMAEvaluator(seed=42, epsilon=args.epsilon, model_type=args.model_type, z_dim=args.z_dim, experiment_folder=f"cma_experiments/{args.model_type}/cma_{args.model_type}_epsilon_{args.epsilon}/z_{args.z_dim}")
     cma.evaluate_per_seed()
