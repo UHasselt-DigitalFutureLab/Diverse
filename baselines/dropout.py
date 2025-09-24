@@ -179,7 +179,7 @@ def handle_cli_args():
                         help="Which reference model to use.")
     parser.add_argument("--epsilon", type=float, choices=[0.01, 0.02, 0.03, 0.04, 0.05], required=True,
                         help="Rashomon set threshold (fraction of reference loss).")
-    parser.add_argument("--search_budget", type=int, choices=[167, 320, 640, 1284, 2562, 5120], required=True,
+    parser.add_argument("--search_budget", type=int, choices=[162, 320, 640, 1284, 2562, 5120], required=True,
                         help="Total number of models to evaluate (approx).")
     args = parser.parse_args()
     return args

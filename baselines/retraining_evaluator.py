@@ -138,7 +138,7 @@ def handle_cli_args():
     parser = argparse.ArgumentParser(description="Train models with different seeds.")
     parser.add_argument("--model", type=str, choices=["resnet", "vgg", "mnist"], required=True,
                         help="Type of model to train: 'resnet', 'vgg', or 'mnist'.")
-    parser.add_argument("--search_budget", type=int, choices=[167, 320, 640, 1284, 2562, 5120], required=True,
+    parser.add_argument("--search_budget", type=int, choices=[162, 320, 640, 1284, 2562, 5120], required=True,
                         help="Maximum number of models to evaluate.")
     args = parser.parse_args()
     return args
