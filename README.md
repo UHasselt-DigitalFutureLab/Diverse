@@ -55,6 +55,23 @@ This will:
 1. Train the reference (pretrained) models for each dataset.
 2. Generate initial latent vectors (**Z seeds**) used for CMA-ES exploration.
 
+## Running CMA-ES Search
+Before running, ensure the conda environment is activated:
+```bash
+conda activate diverse
+```
+This script performs an extensive hyperparameter sweep, which can take a long time and heavily use the GPU. Parallelism is controlled through subprocesses; to adjust the number of workers, edit ```utils/experiment_parameters.py```
+
+You have to repeat the following command for each epsilon (0.01, 0.02, 0.03, 0.04, 0.05) and each model type (mnist, resnet50_pneumonia, vgg16_cifar10)
+```bash
+python run_epsilon_CMA.py --model_type=<model_type> --epsilon=<epsilon>
+```
+
+### Evaluating CMA-ES Results
+Once you have run all CMA-ES runs, you can evaluate each epsilon, z dimension (2, 4, 8, 16, 32 and 64) and dataset combination with the following:
+```bash
+python -m CMA.CMA_evaluation --model_type=<model_type> --epsilon=<epsilon> --z_dim=<z_dim>
+```
 
 ## 🏁 Running Baselines
 Before running any baselines, ensure the conda environment is activated:
@@ -122,3 +139,10 @@ For VGG16:
 python -m baselines.retraining_evaluator --model=vgg --search_budget=640
 ```
 
+## Plotting the results
+To plot the results, you will first have to run each CMA search and evaluation for every dataset and epsilon, and have also run and evaluate all baselines for each dataset on the same epsilons.
+
+Once the results are available, generate the plots with:
+```bash
+python -m utils.plotter
+```

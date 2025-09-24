@@ -127,7 +127,7 @@ def viable_prediction_range(rashomon_preds_for_truth_label: np.ndarray) -> tuple
     maxs = rashomon_preds_for_truth_label.max(axis=0)
     return mins, maxs, maxs - mins
 
-# Based on the dropout paper: https://arxiv.org/abs/2402.00728
+# Taken from the dropout paper: https://arxiv.org/abs/2402.00728
 
 def blahut_arimoto(Pygw, log_base=2, epsilon=1e-12, max_iter=1e3):
     """
@@ -156,6 +156,7 @@ def blahut_arimoto(Pygw, log_base=2, epsilon=1e-12, max_iter=1e3):
     capacity = capacity / np.log(log_base)
     return capacity, r, cnt + 1
 
+# Taken from the dropout paper: https://arxiv.org/abs/2402.00728
 
 def rashomon_capacity(scores_MNC):
     """
