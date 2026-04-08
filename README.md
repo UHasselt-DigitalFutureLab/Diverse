@@ -18,21 +18,13 @@
 </p>
 <br>
 <p align="center">
-  <a href="https://iclr.cc/virtual/2026/poster/10007789">
-    <img src="https://img.shields.io/badge/ICLR-2026-4B44CE">
-  </a>
+  <a href="https://iclr.cc/virtual/2026/poster/10007789"><img src="https://img.shields.io/badge/ICLR-2026-4B44CE" alt="ICLR"></a>
   &nbsp;
-  <a href="https://openreview.net/forum?id=kQjSUHC84V">
-    <img src="https://img.shields.io/badge/OpenReview-kQjSUHC84V-8C1B13">
-  </a>
+  <a href="https://openreview.net/forum?id=kQjSUHC84V"><img src="https://img.shields.io/badge/OpenReview-kQjSUHC84V-8C1B13"></a>
   &nbsp;
-  <a href="https://arxiv.org/abs/2601.20627">
-    <img src="https://img.shields.io/badge/arXiv-2601.20627-B31B1B?logo=arxiv&logoColor=white">
-  </a>
+  <a href="https://arxiv.org/abs/2601.20627"><img src="https://img.shields.io/badge/arXiv-2601.20627-B31B1B?logo=arxiv&logoColor=white"></a>
   &nbsp;
-  <a href="https://polyformproject.org/licenses/noncommercial/1.0.0/">
-    <img src="https://img.shields.io/badge/license-PolyForm--NC-blue">
-  </a>
+  <a href="https://polyformproject.org/licenses/noncommercial/1.0.0/"><img src="https://img.shields.io/badge/license-PolyForm--NC-blue"></a>
 </p>
 
 <p align="center">
