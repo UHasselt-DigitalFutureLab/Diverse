@@ -1,11 +1,52 @@
 # DIVERSE: Disagreement-Inducing Vector Evolution For Rashomon Set Exploration
 
----
+<p align="center">
+  <strong>
+    <a href="https://be.linkedin.com/in/gilles-eerlings" target="_blank">Gilles Eerlings</a><sup>1,2,3</sup> &nbsp;·&nbsp;
+    <a href="https://brent-zoomers.github.io/" target="_blank">Brent Zoomers</a><sup>1,2,4</sup> &nbsp;·&nbsp;
+    <a href="https://www.uhasselt.be/en/who-is-who/jori-liesenborgs" target="_blank">Jori Liesenborgs</a><sup>1,2</sup> &nbsp;·&nbsp;
+    <a href="https://gustavorovelo.net/" target="_blank">Gustavo Rovelo Ruiz</a><sup>1,2</sup> &nbsp;·&nbsp;
+    <a href="https://krisluyten.net/" target="_blank">Kris Luyten</a><sup>1,2,3</sup>
+  </strong>
+</p>
+
+<p align="center">
+  <sup>1</sup> UHasselt Digital Future Lab &nbsp;·&nbsp;
+  <sup>2</sup> Flanders Make &nbsp;·&nbsp;
+  <sup>3</sup> Flanders AI Research &nbsp;·&nbsp;
+  <sup>4</sup> FWO (Fonds Wetenschappelijk Onderzoek – Vlaanderen)
+</p>
+<br>
+<p align="center">
+  <a href="https://iclr.cc/virtual/2026/poster/10007789">
+    <img src="https://img.shields.io/badge/ICLR-2026-4B44CE">
+  </a>
+  &nbsp;
+  <a href="https://openreview.net/forum?id=kQjSUHC84V">
+    <img src="https://img.shields.io/badge/OpenReview-kQjSUHC84V-8C1B13">
+  </a>
+  &nbsp;
+  <a href="https://arxiv.org/abs/2601.20627">
+    <img src="https://img.shields.io/badge/arXiv-2601.20627-B31B1B?logo=arxiv&logoColor=white">
+  </a>
+  &nbsp;
+  <a href="https://polyformproject.org/licenses/noncommercial/1.0.0/">
+    <img src="https://img.shields.io/badge/license-PolyForm--NC-blue">
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Environment-Anaconda-44A833?logo=anaconda&logoColor=white">
+  &nbsp;
+  <img src="https://img.shields.io/badge/Python-3.11.7-3776AB?logo=python&logoColor=white">
+  &nbsp;
+  <img src="https://img.shields.io/badge/Tested%20on-Ubuntu%2022.04-E95420?logo=ubuntu&logoColor=white">
+</p>
 
 ## 🌟 Overview
 
-**DIVERSE** is a framework for systematically exploring the **Rashomon set** of neural networks — the collection of models that achieve similar accuracy to a reference model while differing in their predictive behavior.  
-The method augments pretrained networks with **Feature-wise Linear Modulation (FiLM)** layers and uses **Covariance Matrix Adaptation Evolution Strategy (CMA-ES)** to explore a latent modulation space, discovering diverse model variants **without retraining or gradient access**
+**DIVERSE** is a framework for systematically exploring the **Rashomon set** of neural networks, which is the collection of models that achieve similar accuracy to a reference model while differing in their predictive behavior.  
+The method augments pretrained networks with **Feature-wise Linear Modulation (FiLM)** layers and uses **Covariance Matrix Adaptation Evolution Strategy (CMA-ES)** to explore a latent modulation space, discovering diverse model variants **without retraining or requiring gradient access**.
 
 ---
 
@@ -145,4 +186,17 @@ To plot the results, you will first have to run each CMA search and evaluation f
 Once the results are available, generate the plots with:
 ```bash
 python -m utils.plotter
+```
+
+## Citation
+
+```bibtex
+@inproceedings{
+  eerlings2026diverse,
+  title={{DIVERSE}: Disagreement-Inducing Vector Evolution for Rashomon Set Exploration},
+  author={Gilles Eerlings and Brent Zoomers and Jori Liesenborgs and Gustavo Rovelo Ruiz and Kris Luyten},
+  booktitle={The Fourteenth International Conference on Learning Representations},
+  year={2026},
+  url={https://openreview.net/forum?id=kQjSUHC84V}
+}
 ```
