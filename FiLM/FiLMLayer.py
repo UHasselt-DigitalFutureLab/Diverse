@@ -45,19 +45,35 @@ class FiLMLayer(tf.keras.layers.Layer):
             name='W_beta'
         )
 
+        self.gate = self.add_weight(
+            shape=(),
+            initializer=tf.keras.initializers.Ones(),
+            trainable=False,
+            name="gate"
+        )
+
+    def set_gate(self, value: float):
+        self.gate.assign(float(value))
+
     def call(self, inputs: tf.Tensor, z: tf.Tensor) -> tf.Tensor:
          # 1. Linear projection  z → raw (unclamped)  γ  and  β
         raw_gamma = tf.matmul(z, self.W_gamma)
         raw_beta  = tf.matmul(z, self.W_beta)
 
         # 2. Tanh clamp to keep the range safe and bounded
-        gamma = 1.0 + tf.tanh(raw_gamma)
-        beta  = tf.tanh(raw_beta)
+        gamma = 1.0 + self.gate * tf.tanh(raw_gamma)
+        beta  = self.gate * tf.tanh(raw_beta)
 
         # 3. Apply FiLM modulation
         #    • For 2-D inputs  (B,C)  ➞ broadcasting works automatically.
         #    • For 4-D inputs (B,H,W,C) we need to add spatial dims to γ,β.
         if inputs.shape.rank == 2:          # (B, C)
+            return gamma * inputs + beta
+        elif inputs.shape.rank == 3:
+            # ViT / Transformers case: (batch, tokens, channels)
+            # Expand gamma/beta to broadcast over sequence dimension
+            gamma = gamma[:, None, :]   # shape (batch, 1, C)
+            beta = beta[:, None, :]     # shape (batch, 1, C)
             return gamma * inputs + beta
         elif inputs.shape.rank == 4:                               # (B, H, W, C)
             # Expand γ, β to match the input shape (B, H, W, C)
@@ -76,3 +92,7 @@ class FiLMLayer(tf.keras.layers.Layer):
             gamma = 1.0 + tf.tanh(raw_gamma)
             beta  = tf.tanh(raw_beta)
             return gamma, beta
+    
+
+    def get_gate(self):
+        return self.gate

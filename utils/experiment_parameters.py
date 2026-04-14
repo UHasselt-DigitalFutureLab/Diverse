@@ -6,7 +6,7 @@ def get_experiment_parameters(model_type):
     This function is used to set the parameters for the CMA-ES algorithm.
     Args:
         model_type (str): The type of model/experiment. Options are "mnist",
-                          "resnet50_pneumonia", "vgg16_cifar10".
+                          "resnet50_pneumonia", "vgg16_cifar10", "vision_transformer_cifar10".
     Returns:
         dict: A dictionary containing the experiment parameters.
     *  ``reference_model``: filename of the pretrained reference model.
@@ -26,7 +26,7 @@ def get_experiment_parameters(model_type):
             "reference_model": "mnist_base.keras",
             "model_type": "mnist",
             "input_shape": (28, 28),
-            "max_workers": 5, # Number of parallel workers for running experiments, should be set based on hardware capabilities
+            "max_workers": 12, # Number of parallel workers for running experiments, should be set based on hardware capabilities
             "train_x_path": "datasets/mnist/x_train.npy",
             "train_y_path": "datasets/mnist/y_train.npy",
             "val_x_path": "datasets/mnist/x_val.npy",
@@ -60,6 +60,19 @@ def get_experiment_parameters(model_type):
             "test_x_path": "datasets/cifar10_vgg16/x_test.npy",
             "test_y_path": "datasets/cifar10_vgg16/y_test.npy",
         }
+    elif model_type == "vision_transformer_cifar10":
+            return {
+                "reference_model": "vision_transformer.keras",
+                "model_type": "vision_transformer_cifar10",
+                "input_shape": (32, 32, 3),
+                "max_workers": 4, # Number of parallel workers for running experiments, should be set based on hardware capabilities
+                "train_x_path": "datasets/cifar10_vit/x_train.npy",
+                "train_y_path": "datasets/cifar10_vit/y_train.npy",
+                "val_x_path": "datasets/cifar10_vit/x_val.npy",
+                "val_y_path": "datasets/cifar10_vit/y_val.npy",
+                "test_x_path": "datasets/cifar10_vit/x_test.npy",
+                "test_y_path": "datasets/cifar10_vit/y_test.npy",
+            }
     else:
         raise ValueError(f"Unknown experiment name: {model_type}")
 

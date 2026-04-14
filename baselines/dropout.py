@@ -173,8 +173,6 @@ def get_rashomon_metrics(rashomon_probs, rashomon_labels, y_true, ref_preds):
 
 def handle_cli_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--method", type=str, choices=["bernoulli", "gaussian"], required=True,
-                        help="Dropout method to use.")
     parser.add_argument("--model", type=str, choices=["mnist", "vgg16_cifar10", "resnet50_pneumonia"], required=True,
                         help="Which reference model to use.")
     parser.add_argument("--epsilon", type=float, choices=[0.01, 0.02, 0.03, 0.04, 0.05], required=True,

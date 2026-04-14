@@ -9,7 +9,7 @@ from utils.experiment_parameters import get_experiment_parameters, get_cma_hyper
 from CMA.CMA_evolution_strategy import CMAEvolutionStrategy
 
 
-def _run_cma_task(model_type: str, task: dict, epsilon: float):
+def _run_cma_task(model_type: str, task: dict, epsilon: float, lambda_val: float):
     """
     Worker function executed in a separate process.
     Re-creates a CMASearch instance and runs ONE experiment.
@@ -34,23 +34,25 @@ def _run_cma_task(model_type: str, task: dict, epsilon: float):
     tf.config.threading.set_intra_op_parallelism_threads(1)
     tf.config.threading.set_inter_op_parallelism_threads(1)
 
-    search = CMASearch(model_type=model_type, max_workers=1, epsilon=epsilon)
+    search = CMASearch(model_type=model_type, max_workers=1, epsilon=epsilon, lambda_val=lambda_val)
     search.run_one_cma_experiment(task["z_file"], task["sigma"], task["z_dim"])
     return task                       # used to mark completion
 
 
 class CMASearch:
-    def __init__(self, model_type, max_workers, epsilon):
+    def __init__(self, model_type, max_workers, epsilon, lambda_val):
         self.random_seed = 42
         self.model_type = model_type
         self.epsilon = epsilon
         self.max_workers = max_workers
-        self.experiment_name = f"cma_{model_type}_epsilon_{epsilon}"
+        self.lambda_val = lambda_val
+        self.experiment_name = f"cma_{model_type}_epsilon_{epsilon}_lambda_{lambda_val}"
         self.todo_file_path = Path(f"todo/{self.experiment_name}.json")
         os.makedirs(self.todo_file_path.parent, exist_ok=True)
         self.z_file_path = Path("z_seeds")
         self.sigma_values = [0.1, 0.2, 0.3, 0.4, 0.5]
-        self.z_dims = [2, 4, 8, 16, 32, 64]
+        #self.z_dims = [2, 4, 8, 16, 32, 64]
+        self.z_dims = [2]
         self._todo = None
 
 
@@ -121,7 +123,8 @@ class CMASearch:
         
         cma_es = CMAEvolutionStrategy(exp_name=self.experiment_name, reference_model=params["reference_model"],
                                         popsize=popsize, model_type=params["model_type"], z_dim=z_dim, input_shape=params["input_shape"],
-                                        z_0_file=self.z_file_path.joinpath(f"z_{z_dim}/{z_0_file}"), sigma_0=sigma, seed=self.random_seed, dataloader=dataloader, epsilon=self.epsilon)
+                                        z_0_file=self.z_file_path.joinpath(f"z_{z_dim}/{z_0_file}"), sigma_0=sigma, seed=self.random_seed,
+                                        dataloader=dataloader, epsilon=self.epsilon, lambda_val=self.lambda_val)
 
         cma_es.run(generations=generations)
 
@@ -138,7 +141,7 @@ class CMASearch:
         ctx = mp.get_context("spawn")
         with ProcessPoolExecutor(max_workers=self.max_workers, mp_context=ctx) as pool:
             futures = {
-                pool.submit(_run_cma_task, self.model_type, task, self.epsilon): task
+                pool.submit(_run_cma_task, self.model_type, task, self.epsilon, self.lambda_val): task
                 for task in self.todo
             }
 

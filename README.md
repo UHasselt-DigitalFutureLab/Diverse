@@ -1,4 +1,4 @@
-# DIVERSE: Disagreement-Inducing Vector Evolution For Rashomon Set Exploration
+# DIVERSE: Disagreement-Inducing Vector Evolution For Rashomon Set Exploration [ICLR 2026]
 
 <p align="center">
   <strong>
@@ -30,7 +30,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Environment-Anaconda-44A833?logo=anaconda&logoColor=white">
   &nbsp;
-  <img src="https://img.shields.io/badge/Python-3.11.7-3776AB?logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/Python-3.12.9-3776AB?logo=python&logoColor=white">
   &nbsp;
   <img src="https://img.shields.io/badge/Tested%20on-Ubuntu%2022.04-E95420?logo=ubuntu&logoColor=white">
 </p>
@@ -65,7 +65,7 @@ The method augments pretrained networks with **Feature-wise Linear Modulation (F
 
 **Software**
 - [Anaconda](https://www.anaconda.com/)
-- Python 3.11.7
+- Python 3.12.9
 
 
 ### Setup
@@ -95,16 +95,39 @@ conda activate diverse
 ```
 This script performs an extensive hyperparameter sweep, which can take a long time and heavily use the GPU. Parallelism is controlled through subprocesses; to adjust the number of workers, edit ```utils/experiment_parameters.py```
 
-You have to repeat the following command for each epsilon (0.01, 0.02, 0.03, 0.04, 0.05) and each model type (mnist, resnet50_pneumonia, vgg16_cifar10)
+You have to repeat the following command for each epsilon and each model type (exception for the vision transformer):
 ```bash
 python run_epsilon_CMA.py --model_type=<model_type> --epsilon=<epsilon>
 ```
 
+<details>
+<summary><span style="font-weight: bold;">Command Line Arguments for run_epsilon_CMA.py</span></summary>
+
+| Argument | Type | Required | Options | Description |
+| --- | --- | --- | --- | ---|
+| `--model_type` | str | ✅ | mnist, resnet50_pneumonia, vgg16_cifar10, vision_transformer_cifar10 | Type of model to use |
+| `--epsilon` | float | ✅ | 0.01, 0.02, 0.03, 0.04, 0.05 | Epsilon value for the Rashomon requirement |
+| `--lambda_val` | float | ❌ | 0.0, 0.1, 0.2, 0.3, 0.4, 0.5 (default), 0.6, 0.7, 0.8, 0.9, 1.0 | Lambda value used as a mixing weight for hard and soft disagreement|
+
+</details>
+
 ### Evaluating CMA-ES Results
-Once you have run all CMA-ES runs, you can evaluate each epsilon, z dimension (2, 4, 8, 16, 32 and 64) and dataset combination with the following:
+Once you have run all CMA-ES runs, you can evaluate each epsilon, z dimension and dataset combination with the following:
 ```bash
 python -m CMA.CMA_evaluation --model_type=<model_type> --epsilon=<epsilon> --z_dim=<z_dim>
 ```
+
+<details>
+<summary><span style="font-weight: bold;">Command Line Arguments for CMA.CMA_evaluation.py</span></summary>
+
+| Argument | Type | Required | Options | Description |
+| --- | --- | --- | --- | ---|
+| `--model_type` | str | ✅ | mnist, resnet50_pneumonia, vgg16_cifar10, vision_transformer_cifar10 | Type of model to use |
+| `--epsilon` | float | ✅ | 0.01, 0.02, 0.03, 0.04, 0.05 | Epsilon value for the Rashomon requirement |
+| `--z_dim` | int | ✅ | 2, 4, 8, 16, 32, 64 | Dimension of the z vector |
+| `--lambda_val` | float | ❌ | 0.0, 0.1, 0.2, 0.3, 0.4, 0.5 (default), 0.6, 0.7, 0.8, 0.9, 1.0 | Lambda value used as a mixing weight for hard and soft disagreement|
+
+</details>
 
 ## 🏁 Running Baselines
 Before running any baselines, ensure the conda environment is activated:
@@ -115,62 +138,59 @@ conda activate diverse
 We provide an implementation of the dropout-based Rashomon exploration method described in [Hsu et al. (ICLR 2024).](https://proceedings.iclr.cc/paper_files/paper/2024/file/8cd1ce03ea58b3d7dfd809e4d42f08ea-Paper-Conference.pdf)
 
 
-For MNIST:
 ```bash
-python -m baselines.dropout --method=gaussian --model=mnist --epsilon=0.05 --search_budget=167
+python -m baselines.dropout --model=<model_type> --epsilon=<epsilon> --search_budget=<search_budget>
 ```
 
-For ResNet50:
-```bash
-python -m baselines.dropout --method=gaussian --model=resnet --epsilon=0.05 --search_budget=167
-```
+<details>
+<summary><span style="font-weight: bold;">Command Line Arguments for baselines.dropout.py</span></summary>
 
-For VGG16:
-```bash
-python -m baselines.dropout --method=gaussian --model=vgg --epsilon=0.05 --search_budget=167
-```
+| Argument | Type | Required | Options | Description |
+| --- | --- | --- | --- | ---|
+| `--model` | str | ✅ | mnist, resnet50_pneumonia, vgg16_cifar10 | Type of model to use |
+| `--epsilon` | float | ✅ | 0.01, 0.02, 0.03, 0.04, 0.05 | Epsilon value for the Rashomon requirement |
+| `--search_budget` | int | ✅ | 162, 320, 640, 1284, 2562, 5120 | Total number of models to evaluate (approx). |
+
+</details>
+
 
 
 ### Retraining
-**Warning:** Retraining is computationally expensive and may require significant time and GPU resources.You can adjust the number of models to train and evaluate via the ```--search_budget``` flags.
-Supported values: **167, 320, 640, 1284, 2562, 5120**.
+**Warning:** Retraining is computationally expensive and may require significant time and GPU resources.
 #### Training
-For MNIST:
 ```bash
-python -m baselines.retraining --model=mnist --start_seed=42 --search_budget=5120
+python -m baselines.retraining --model=<model> --start_seed=<start_seed> --search_budget=<search_budget>
 ```
 
-For ResNet50:
-```bash
-python -m baselines.retraining --model=resnet --start_seed=42 --search_budget=640
-```
+<details>
+<summary><span style="font-weight: bold;">Command Line Arguments for baselines.retraining.py</span></summary>
 
-For VGG16:
-```bash
-python -m baselines.retraining --model=vgg --start_seed=45 --search_budget=640
-```
+| Argument | Type | Required | Options | Description |
+| --- | --- | --- | --- | ---|
+| `--model` | str | ✅ | mnist, resnet, vgg | Type of model to use |
+| `--start_seed` | int | ✅ | 42, 45 | Starting seed value, vgg requires seed 45 |
+| `--search_budget` | int | ✅ | 162, 320, 640, 1284, 2562, 5120 | Total number of models to evaluate (approx). |
+
+</details>
 
 #### Evaluation
 After training, results can be evaluated on the test set.
-Outputs will be stored in 5 folders (```epsilon_0.01```, ```epsilon_0.02```, ```epsilon_0.03```, ```epsilon_0.04```, ```epsilon_0.05```) in the following path:
-```
-baseline_evaluations/retraining/retraining_<model>/epsilon_<epsilon_value>/
+Outputs will be stored in a folder in the following path: `baseline_evaluations/retraining/retraining_<model>/epsilon_<epsilon_value>/`
+
+```bash
+python -m baselines.retraining_evaluator --model=<model> --epsilon=<epsilon> --search_budget=<search_budget>
 ```
 
-For MNIST:
-```bash
-python -m baselines.retraining_evaluator --model=mnist --search_budget=5120
-```
+<details>
+<summary><span style="font-weight: bold;">Command Line Arguments for baselines.retraining_evaluator.py</span></summary>
 
-For ResNet50:
-```bash
-python -m baselines.retraining_evaluator --model=resnet --search_budget=640
-```
+| Argument | Type | Required | Options | Description |
+| --- | --- | --- | --- | ---|
+| `--model` | str | ✅ | mnist, resnet, vgg | Type of model to use |
+| `--epsilon` | float | ✅ | 0.01, 0.02, 0.03, 0.04, 0.05 | Epsilon value for the Rashomon requirement |
+| `--search_budget` | int | ✅ | 162, 320, 640, 1284, 2562, 5120 | Total number of models to evaluate should be the same as the budget used while training. |
 
-For VGG16:
-```bash
-python -m baselines.retraining_evaluator --model=vgg --search_budget=640
-```
+</details>
 
 ## Plotting the results
 To plot the results, you will first have to run each CMA search and evaluation for every dataset and epsilon, and have also run and evaluate all baselines for each dataset on the same epsilons.

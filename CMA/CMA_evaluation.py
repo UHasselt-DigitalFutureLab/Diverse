@@ -12,13 +12,14 @@ from FiLM.FiLMModel import FiLMModel
 
 
 class CMAEvaluator:
-    def __init__(self, seed, epsilon, model_type, z_dim, experiment_folder):
+    def __init__(self, seed, epsilon, model_type, z_dim, lambda_val, experiment_folder):
         np.random.seed(seed)
         self.seed = seed
         self.epsilon = epsilon
         self.model_type = model_type
         self.z_dim = z_dim
         self.experiment_folder = experiment_folder
+        self.lambda_val = lambda_val
         self.experiment_parameters = get_experiment_parameters(self.model_type)
         self.FiLM_model = FiLMModel(self.experiment_parameters["reference_model"], self.experiment_parameters["input_shape"], self.model_type, self.seed, self.z_dim)
         self.dataloader = Dataloader(test_x_path=self.experiment_parameters["test_x_path"], test_y_path=self.experiment_parameters["test_y_path"])
@@ -26,7 +27,7 @@ class CMAEvaluator:
         self.sigmas = sorted(self.sigmas, key=lambda x: float(x.split("_")[1]))
         self.experiment_dfs = self.load_experiment_data()
         self.ref_preds, self.ref_acc, self.ref_loss = self._get_reference_results(subset="test")
-        self.output_folder = Path("cma_evaluations") / f"{self.model_type}" / f"epsilon_{self.epsilon}" / f"z_{self.z_dim}"
+        self.output_folder = Path("cma_evaluations") / f"{self.model_type}" / f"epsilon_{self.epsilon}_lambda_{self.lambda_val}" / f"z_{self.z_dim}"
         (self.output_folder / "model_evaluations").mkdir(parents=True, exist_ok=True)
         (self.output_folder / "rashomon_metrics").mkdir(parents=True, exist_ok=True)
 
@@ -182,14 +183,16 @@ class CMAEvaluator:
 
 def handle_cli_args():
     parser = argparse.ArgumentParser(description="Evaluate CMA-ES candidates on a test set.")
-    parser.add_argument("--model_type", type=str, choices=["mnist", "resnet50_pneumonia", "vgg16_cifar10"], required=True, help="Type of the model (e.g., 'mnist').")
+    parser.add_argument("--model_type", type=str, choices=["mnist", "resnet50_pneumonia", "vgg16_cifar10", "vision_transformer_cifar10"], required=True, help="Type of the model (e.g., 'mnist').")
     parser.add_argument("--epsilon", type=float, choices=[0.01, 0.02, 0.03, 0.04, 0.05], required=True, help="Epsilon value for the Rashomon set.")
-    parser.add_argument("--z_dim", type=int, choices=[1, 2, 4, 8, 16, 32, 64], required=True, help="Dimension of the z vector.")
+    parser.add_argument("--z_dim", type=int, choices=[2, 4, 8, 16, 32, 64], required=True, help="Dimension of the z vector.")
+    parser.add_argument("--lambda_val", type=float, required=False, default=0.5, help="Lambda value used as a mixing weight for hard and soft disagreement", choices=[0.0,0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0])
     return parser.parse_args()
 
 
 if __name__ == "__main__": 
     # Handle CLI arguments
     args = handle_cli_args()
-    cma = CMAEvaluator(seed=42, epsilon=args.epsilon, model_type=args.model_type, z_dim=args.z_dim, experiment_folder=f"cma_experiments/{args.model_type}/cma_{args.model_type}_epsilon_{args.epsilon}/z_{args.z_dim}")
+    print(args.lambda_val)
+    cma = CMAEvaluator(seed=42, epsilon=args.epsilon, model_type=args.model_type, z_dim=args.z_dim, lambda_val=args.lambda_val, experiment_folder=f"cma_experiments/{args.model_type}/cma_{args.model_type}_epsilon_{args.epsilon}_lambda_{args.lambda_val}/z_{args.z_dim}")
     cma.evaluate_per_seed()

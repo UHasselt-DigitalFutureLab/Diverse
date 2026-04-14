@@ -140,6 +140,8 @@ def handle_cli_args():
                         help="Type of model to train: 'resnet', 'vgg', or 'mnist'.")
     parser.add_argument("--search_budget", type=int, choices=[162, 320, 640, 1284, 2562, 5120], required=True,
                         help="Maximum number of models to evaluate.")
+    parser.add_argument("--epsilon", type=float, choices=[0.01, 0.02, 0.03, 0.04, 0.05], required=True,
+                        help="Rashomon set threshold (fraction of reference loss).")
     args = parser.parse_args()
     return args
 
@@ -155,8 +157,8 @@ if __name__ == "__main__":
         ref_val_loss, ref_test_loss, ref_probs, ref_preds, y_true = get_vgg_ref()
     else:
         raise ValueError(f"Unknown model type: {model_type}")
-    for epsilon in [0.01, 0.02, 0.03, 0.04, 0.05]:
-        print(f"Processing epsilon: {epsilon}")
-        for models in [args.search_budget]:
-            npz_folder = f"baseline_evaluations/retraining/retraining_{model_type}"
-            get_data_from_chunk(npz_folder, epsilon, models, ref_val_loss, ref_test_loss, y_true, ref_preds)
+    epsilon = args.epsilon
+    print(f"Processing epsilon: {epsilon}")
+    for models in [args.search_budget]:
+        npz_folder = f"baseline_evaluations/retraining/retraining_{model_type}"
+        get_data_from_chunk(npz_folder, epsilon, models, ref_val_loss, ref_test_loss, y_true, ref_preds)

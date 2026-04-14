@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import tensorflow as tf
+from FiLM.film_vision_transformer import create_vit_classifier_film
 
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:
@@ -24,6 +25,8 @@ class FiLMModel:
             self.model = self._rebuild_resnet_model()
         elif name == "vgg16_cifar10":
            self.model = self.rebuild_vgg16_model()
+        elif name == "vision_transformer_cifar10":
+            self.model = self._rebuild_vit_model()
         else:
            raise ValueError(f"Unknown model name: {name}. Supported names are 'mnist', 'resnet50_pneumonia', and 'vgg16_cifar10'.")
         self.sanity_check_rebuild_model()
@@ -84,6 +87,26 @@ class FiLMModel:
             if not isinstance(layer, FiLMLayer):
                 layer.trainable = False
         return new_model_blueprint
+
+    def _rebuild_vit_model(self) -> keras.Model:
+        """
+        Build a FiLM-modulated ViT by:
+        1. Loading the pretrained reference ViT.
+        2. Building a FiLM-enabled ViT with the same architecture & layer names.
+        3. Copying weights from the reference into the new model (skipping FiLMLayers).
+        """
+        # 1. Build FiLM-enabled ViT (uninitialized)
+        film_vit = create_vit_classifier_film(
+            z_dim=self.z_dim,
+            random_seed=self.random_seed,
+        )
+
+        # 2. Copy weights layer-by-layer by name, skipping FiLM layers
+        film_vit = self._transfer_weights_from_reference(film_vit)
+
+        # 4. Freeze base layers as before
+        film_vit = self._freeze_base_layers(film_vit)
+        return film_vit
 
 
     def _rebuild_mnist_model(self) -> keras.Model:

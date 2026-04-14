@@ -15,7 +15,7 @@ from utils.evaluation_metrics import rashomon_check, total_variation_distance
 
 class CMAEvolutionStrategy:
     def __init__(self, reference_model : str, popsize : int, dataloader : Dataloader, model_type : str, exp_name : str, z_dim : int,
-                  input_shape : tuple, z_0_file : str, sigma_0 : float, seed : int, epsilon : float):
+                  input_shape : tuple, z_0_file : str, sigma_0 : float, seed : int, epsilon : float, lambda_val : float):
         # Random seeds for reproducibility
         tf.random.set_seed(seed)
         np.random.seed(seed)
@@ -33,7 +33,8 @@ class CMAEvolutionStrategy:
         self.val_ref_loss = log_loss(self.dataloader.y_val, self.val_ref_preds)
 
         # Experiment specific parameters
-        self.exp_name = exp_name 
+        self.exp_name = exp_name
+        self.lambda_val = lambda_val
         self.z_0 = np.load(z_0_file)
         self.sigma_0 = sigma_0
         self.model_type = model_type
@@ -171,7 +172,7 @@ class CMAEvolutionStrategy:
         records = []
 
         for i, z in enumerate(candidates):
-            fitness, disagreement, acc, tvd, diversity = self.gaussian_total_variation_fitness(z)
+            fitness, disagreement, acc, tvd, diversity = self.gaussian_total_variation_fitness(z, lam=self.lambda_val)
             _, val_acc, val_disagreement, val_tvd, val_loss, is_in_rashomon_set = self.evaluate_z_on_val_set(z)
             record = {
                 "generation": gen_idx,
