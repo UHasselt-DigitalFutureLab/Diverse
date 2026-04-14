@@ -73,7 +73,7 @@ def concatenate_all_results(model_type: str):
     dataframes = []
     for epsilon in epsilons:
         for z_dim in [2, 4, 8, 16, 32, 64]:
-            rashomon_metrics_folder = os.path.join(data_folder, epsilon, "z_" + str(z_dim), "rashomon_metrics")
+            rashomon_metrics_folder = os.path.join(data_folder, epsilon + "_lambda_0.5", "z_" + str(z_dim), "rashomon_metrics")
             csv_files = glob.glob(os.path.join(rashomon_metrics_folder, "*.csv"))
             if not csv_files:
                 print(f"No CSV files found in the folder: {rashomon_metrics_folder}")
